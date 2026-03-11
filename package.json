@@ -1,0 +1,42 @@
+{
+  "name": "web-to-figma",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Open-source Figma plugin that converts live websites into editable Figma designs, with optional AI-powered Auto Layout and semantic naming.",
+  "keywords": [
+    "figma",
+    "figma-plugin",
+    "chrome-extension",
+    "web-to-figma",
+    "design",
+    "ai",
+    "auto-layout"
+  ],
+  "homepage": "https://github.com/nicepkg/Web-to-Figma",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nicepkg/Web-to-Figma.git"
+  },
+  "license": "MIT",
+  "author": "Eric-Geek <yang1827626294@iCloud.com>",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "clean": "turbo run clean && rm -rf node_modules .turbo"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.0.3",
+    "turbo": "^2.4.0",
+    "typescript": "^5.7.0",
+    "typescript-eslint": "^8.57.0"
+  },
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}

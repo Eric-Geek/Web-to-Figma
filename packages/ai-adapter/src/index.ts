@@ -1,0 +1,10 @@
+export { createAdapter } from './adapters/factory';
+export { OpenAICompatibleAdapter } from './adapters/openai-compatible';
+export { AnthropicAdapter } from './adapters/anthropic';
+export { OllamaAdapter } from './adapters/ollama';
+export { preprocess } from './preprocessor';
+export { mergeAutoLayout, mergeSemanticNames } from './postprocess';
+export { runAIPipeline } from './pipeline';
+export type { PipelineOptions, PipelineResult } from './pipeline';
+export { AUTO_LAYOUT_SYSTEM_PROMPT, SEMANTIC_NAMING_SYSTEM_PROMPT } from './prompts/index';
+export type { AIAdapter, AIAdapterConfig, AIProvider } from '@web-to-figma/shared';

@@ -1,0 +1,56 @@
+name: "Bug Report / Bug 报告"
+description: "Report a bug or unexpected behavior / 报告 Bug 或异常行为"
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: "Describe the bug / 描述 Bug"
+      description: "A clear description of what the bug is. / 清晰描述 Bug 是什么。"
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: "Steps to reproduce / 复现步骤"
+      description: "Steps to reproduce the behavior. / 复现该行为的步骤。"
+      value: |
+        1. Go to '...'
+        2. Click on '...'
+        3. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: "Expected behavior / 期望行为"
+      description: "What you expected to happen. / 你期望发生什么。"
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: "Screenshots / 截图"
+      description: "If applicable, add screenshots to help explain the problem. / 如适用，请添加截图。"
+
+  - type: input
+    id: browser
+    attributes:
+      label: "Browser & version / 浏览器及版本"
+      placeholder: "Chrome 122"
+
+  - type: input
+    id: os
+    attributes:
+      label: "Operating system / 操作系统"
+      placeholder: "macOS 14.3"
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: "Additional context / 补充信息"
+      description: "Any other context about the problem. / 其他相关信息。"

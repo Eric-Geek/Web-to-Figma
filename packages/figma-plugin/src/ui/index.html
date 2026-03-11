@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 12px;
+      color: var(--figma-color-text, #333);
+      background: var(--figma-color-bg, #fff);
+      padding: 16px;
+    }
+    h2 { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
+    .section { margin-bottom: 16px; }
+    .drop-zone {
+      border: 2px dashed var(--figma-color-border, #ccc);
+      border-radius: 8px;
+      padding: 32px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .drop-zone:hover,
+    .drop-zone.dragover {
+      border-color: var(--figma-color-bg-brand, #0d99ff);
+      background: var(--figma-color-bg-hover, #f5f5f5);
+    }
+    .drop-zone p { margin-bottom: 8px; color: var(--figma-color-text-secondary, #666); }
+    input[type="file"] { display: none; }
+    .btn {
+      display: inline-block;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: var(--figma-color-bg-brand, #0d99ff);
+      color: #fff;
+    }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: var(--figma-color-border, #e5e5e5);
+      border-radius: 2px;
+      overflow: hidden;
+      display: none;
+    }
+    .progress-bar .fill {
+      height: 100%;
+      background: var(--figma-color-bg-brand, #0d99ff);
+      width: 0%;
+      transition: width 0.2s;
+    }
+    .status {
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--figma-color-text-secondary, #999);
+      min-height: 14px;
+    }
+    .status.error { color: var(--figma-color-text-danger, #f24822); }
+  </style>
+</head>
+<body>
+  <h2>Web to Figma</h2>
+
+  <div class="section">
+    <div class="drop-zone" id="drop-zone">
+      <p>Drag & drop a JSON file here</p>
+      <span class="btn btn-primary" id="browse-btn">Browse File</span>
+      <input type="file" id="file-input" accept=".json" />
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="progress-bar" id="progress-bar">
+      <div class="fill" id="progress-fill"></div>
+    </div>
+    <p class="status" id="status"></p>
+  </div>
+
+  <script>
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const browseBtn = document.getElementById('browse-btn');
+    const progressBar = document.getElementById('progress-bar');
+    const progressFill = document.getElementById('progress-fill');
+    const statusEl = document.getElementById('status');
+
+    function setStatus(msg, isError) {
+      statusEl.textContent = msg;
+      statusEl.className = 'status' + (isError ? ' error' : '');
+    }
+
+    browseBtn.addEventListener('click', function() { fileInput.click(); });
+
+    dropZone.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      dropZone.classList.add('dragover');
+    });
+    dropZone.addEventListener('dragleave', function() {
+      dropZone.classList.remove('dragover');
+    });
+    dropZone.addEventListener('drop', function(e) {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      var file = e.dataTransfer.files[0];
+      if (file) handleFile(file);
+    });
+
+    fileInput.addEventListener('change', function() {
+      var file = fileInput.files[0];
+      if (file) handleFile(file);
+    });
+
+    async function handleFile(file) {
+      setStatus('Reading file…');
+      progressBar.style.display = 'none';
+      progressFill.style.width = '0%';
+
+      try {
+        const text = await file.text();
+        const data = JSON.parse(text);
+
+        const nodeCount = data.metadata && data.metadata.totalNodes;
+        setStatus('Loaded ' + (nodeCount || '?') + ' nodes. Rendering…');
+
+        progressBar.style.display = 'block';
+        parent.postMessage({ pluginMessage: { type: 'IMPORT_JSON', payload: data } }, '*');
+      } catch (err) {
+        if (err instanceof SyntaxError) {
+          setStatus('Error: Invalid JSON file', true);
+        } else {
+          setStatus('Error: ' + err.message, true);
+        }
+      }
+    }
+
+    window.addEventListener('message', async function(event) {
+      const msg = event.data && event.data.pluginMessage;
+      if (!msg) return;
+
+      switch (msg.type) {
+        case 'RENDER_PROGRESS':
+          progressFill.style.width = msg.payload + '%';
+          setStatus('Rendering… ' + msg.payload + '%');
+          break;
+
+        case 'RENDER_COMPLETE':
+          progressFill.style.width = '100%';
+          setStatus('Done! Layers created on canvas.');
+          break;
+
+        case 'RENDER_ERROR':
+          setStatus('Error: ' + msg.payload, true);
+          progressBar.style.display = 'none';
+          break;
+
+        case 'FETCH_IMAGE':
+          await handleImageFetch(msg.payload);
+          break;
+      }
+    });
+
+    async function handleImageFetch(url) {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const buffer = await response.arrayBuffer();
+        const data = Array.from(new Uint8Array(buffer));
+        parent.postMessage({
+          pluginMessage: { type: 'FETCH_IMAGE_RESULT', payload: { url, data } },
+        }, '*');
+      } catch (err) {
+        parent.postMessage({
+          pluginMessage: { type: 'FETCH_IMAGE_RESULT', payload: { url, error: err.message } },
+        }, '*');
+      }
+    }
+  </script>
+</body>
+</html>

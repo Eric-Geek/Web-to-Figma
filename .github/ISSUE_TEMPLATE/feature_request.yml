@@ -1,0 +1,32 @@
+name: "Feature Request / 功能建议"
+description: "Suggest a new feature or enhancement / 建议新功能或改进"
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: "Problem / 问题"
+      description: "What problem does this feature solve? / 这个功能解决什么问题？"
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: "Proposed solution / 建议方案"
+      description: "Describe the solution you'd like. / 描述你期望的解决方案。"
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: "Alternatives considered / 考虑过的替代方案"
+      description: "Any alternative solutions or features you've considered. / 你考虑过的其他方案。"
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: "Additional context / 补充信息"
+      description: "Any other context, mockups, or screenshots. / 其他相关信息、原型图或截图。"

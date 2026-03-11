@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+*.tsbuildinfo
+
+# Turbo
+.turbo/
+
+# pnpm store (should be global, not in project)
+.pnpm-store/
+
+# IDE
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Test coverage
+coverage/
+
+# Captured design files
+*.h2d
+
+# Chrome Extension build
+packages/extractor/dist/
+
+# Figma Plugin build
+packages/figma-plugin/dist/

@@ -1,0 +1,7 @@
+{
+  "name": "Web to Figma",
+  "api": "1.0.0",
+  "main": "dist/sandbox/index.js",
+  "ui": "dist/ui/index.html",
+  "editorType": ["figma"]
+}
